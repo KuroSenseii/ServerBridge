@@ -1,0 +1,65 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+     classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'me.tatarka.retrolambda'
+
+group = 'fr.vmarchaud'
+version = '2.0.0'
+
+description = "mineweb_bridge"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenLocal()
+    maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+	maven { url "https://jitpack.io" }
+	maven { url "http://repo.dmulloy2.net/nexus/repository/public/" }
+	mavenCentral()
+	jcenter()
+}
+
+dependencies {
+    compile "com.google.guava:guava:17.0"
+	//compile files('/Users/valentin/Sites/mineweb_bridge/guava-17.0.jar')
+	//compile group: 'com.google.guava', name: 'guava', version: '17.0'
+	compile "com.google.code.gson:gson:2.5"
+	compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.4.0";
+	implementation 'com.github.SpigotMC:BungeeCord:master-SNAPSHOT'
+	compile 'com.annimon:stream:1.1.1'
+    compileOnly "org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT"
+    compileOnly "org.projectlombok:lombok:1.16.6"
+}
+
+
+
+task fatJar(type: Jar) {
+    from {
+    	configurations.compile.collect {
+    		it.isDirectory() ? it : zipTree(it)
+    	}
+    }
+    with jar
+}
+
+task moveIntoBukkit(type: Copy) {
+	from "build/libs/mineweb_bridge-${version}.jar"
+	into '../_SERVER/plugins/'
+}
+
+task moveIntoBungee(type: Copy) {
+	from "build/libs/mineweb_bridge-${version}.jar"
+	into '../_BUNGEE/plugins/'
+}
